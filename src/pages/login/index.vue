@@ -95,7 +95,7 @@
       <view class="wx-login-section">
         <view class="divider-wrapper">
           <view class="divider-line"></view>
-          <text class="divider-text">或</text>
+          <!-- <text class="divider-text">或</text> -->
           <view class="divider-line"></view>
         </view>
         

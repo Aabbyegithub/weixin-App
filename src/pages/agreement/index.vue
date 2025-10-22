@@ -86,7 +86,7 @@ export default {
   width: 100%;
   min-height: 100vh;
   background-color: #f5f5f5;
-  padding: 30rpx;
+  /* padding: 30rpx; */
 }
 
 .agreement-content {

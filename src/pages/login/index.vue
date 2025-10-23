@@ -1,39 +1,16 @@
 <template>
   <view class="login-container">
-    <!-- 顶部Logo -->
-    <view class="login-header">
-      <view class="app-logo">
-        <text class="logo-text">Link Me</text>
-      </view>
-      <text class="welcome-text">欢迎来到 Link Me</text>
+    <!-- 欢迎文字 -->
+    <view class="welcome-section">
+      <text class="welcome-text">欢迎来到Linkme</text>
     </view>
 
     <!-- 登录表单 -->
     <view class="login-form">
-      <!-- 登录方式切换 -->
-      <view class="login-type-tabs">
-        <view 
-          class="type-tab"
-          :class="{ active: loginType === 'password' }"
-          data-type="password"
-          @tap="switchLoginType"
-        >
-          账号密码
-        </view>
-        <view 
-          class="type-tab"
-          :class="{ active: loginType === 'code' }"
-          data-type="code"
-          @tap="switchLoginType"
-        >
-          验证码登录
-        </view>
-      </view>
-
       <!-- 手机号输入 -->
       <view class="form-item">
         <view class="input-wrapper">
-          <text class="input-prefix">+86</text>
+          <text class="input-icon">📱</text>
           <input 
             class="phone-input" 
             type="number" 
@@ -46,26 +23,10 @@
         </view>
       </view>
 
-      <!-- 密码输入 -->
-      <view class="form-item" v-if="loginType === 'password'">
-        <view class="input-wrapper">
-          <input 
-            class="password-input" 
-            :type="passwordVisible ? 'text' : 'password'"
-            placeholder="请输入密码"
-            placeholder-class="input-placeholder"
-            v-model="password"
-            @input="onPasswordInput"
-          />
-          <view class="password-toggle" @tap="togglePasswordVisible">
-            <text class="toggle-icon">{{ passwordVisible ? '👁️' : '👁️‍🗨️' }}</text>
-          </view>
-        </view>
-      </view>
-
       <!-- 验证码输入 -->
-      <view class="form-item" v-if="loginType === 'code'">
+      <view class="form-item">
         <view class="input-wrapper">
+          <text class="input-icon">🛡️</text>
           <input 
             class="code-input" 
             type="number" 
@@ -81,6 +42,11 @@
         </view>
       </view>
 
+      <!-- 自动创建账号提示 -->
+      <view class="info-text">
+        <text>未注册的手机号验证后自动创建Linkme账号</text>
+      </view>
+
       <!-- 登录按钮 -->
       <button 
         class="login-btn"
@@ -91,40 +57,30 @@
         登录
       </button>
 
-      <!-- 微信登录 -->
-      <view class="wx-login-section">
+      <!-- 第三方登录 -->
+      <view class="third-party-section">
         <view class="divider-wrapper">
           <view class="divider-line"></view>
-          <!-- <text class="divider-text">或</text> -->
           <view class="divider-line"></view>
         </view>
         
-        <button class="wx-login-btn" open-type="getUserInfo" @getuserinfo="handleWxLogin">
-          <image class="wx-icon" src="/static/icons/wechat.png" mode="aspectFit"></image>
-          <text>使用微信号登录</text>
-        </button>
+        <view class="third-party-buttons">
+          <view class="third-party-btn" @tap="handleWxLogin">
+            <image class="third-party-icon" src="../../static/icons/微信.png" mode="widthFix" />
+            <text class="third-party-text">微信</text>
+          </view>
+          <view class="third-party-btn" @tap="handleQQLogin">
+            <image class="third-party-icon" src="../../static/icons/QQ (1).png" mode="widthFix" />  
+            <text class="third-party-text">QQ</text>
+          </view>
+        </view>
       </view>
 
       <!-- 用户协议 -->
       <view class="agreement-section">
-        <view class="agreement-wrapper">
-          <checkbox-group @change="onAgreeChange">
-            <label class="agreement-label">
-              <checkbox class="agreement-checkbox" value="agree" :checked="isAgree"/>
-              <text class="agreement-text">我已阅读并同意</text>
-            </label>
-          </checkbox-group>
-          <text class="agreement-link" @tap="goToAgreement">《用户协议》</text>
-          <text class="agreement-text">和</text>
-          <text class="agreement-link" @tap="goToPrivacy">《隐私政策》</text>
-        </view>
+        <text class="agreement-text">登录即同意</text>
+        <text class="agreement-link" @tap="goToAgreement">用户协议</text>
       </view>
-    </view>
-
-    <!-- 底部装饰 -->
-    <view class="bottom-decoration">
-      <view class="decoration-wave wave-1"></view>
-      <view class="decoration-wave wave-2"></view>
     </view>
   </view>
 </template>
@@ -135,16 +91,12 @@ import request from '../../utils/request'
 export default {
   data() {
     return {
-      loginType: 'password', // 'password' 或 'code'
       phoneNumber: '',
-      password: '',
       verifyCode: '',
-      codeText: '获取验证码',
+      codeText: '获取验证',
       canGetCode: false,
       canLogin: false,
-      isAgree: false,
-      countdown: 60,
-      passwordVisible: false
+      countdown: 60
     }
   },
 
@@ -155,45 +107,21 @@ export default {
       this.updateCanLogin()
     },
 
-    // 密码输入
-    onPasswordInput(e) {
-      this.password = e.detail.value
-      this.updateCanLogin()
-    },
-
     // 验证码输入
     onCodeInput(e) {
       this.verifyCode = e.detail.value
       this.updateCanLogin()
     },
 
-    // 切换登录方式
-    switchLoginType(e) {
-      const loginType = e.currentTarget.dataset.type
-      this.loginType = loginType
-      this.password = ''
-      this.verifyCode = ''
-      this.updateCanLogin()
-    },
-
-    // 切换密码可见性
-    togglePasswordVisible() {
-      this.passwordVisible = !this.passwordVisible
-    },
-
     // 更新登录按钮状态
     updateCanLogin() {
-      const { phoneNumber, password, verifyCode, loginType, isAgree } = this
+      const { phoneNumber, verifyCode } = this
       let canLogin = false
       let canGetCode = false
       
-      if (this.validatePhone(phoneNumber) && isAgree) {
-        if (loginType === 'password') {
-          canLogin = password.length >= 6
-        } else {
-          canLogin = verifyCode.length === 6
-          canGetCode = true
-        }
+      if (this.validatePhone(phoneNumber)) {
+        canGetCode = true
+        canLogin = verifyCode.length === 6
       }
       
       this.canLogin = canLogin
@@ -266,17 +194,13 @@ export default {
       })
       
       try {
-        const { phoneNumber, password, verifyCode, loginType } = this
+        const { phoneNumber, verifyCode } = this
         const app = getApp()
         
         const loginData = {
-          phone: phoneNumber
-        }
-        
-        if (loginType === 'password') {
-          loginData.password = password
-        } else {
-          loginData.code = verifyCode
+          phone:'13800138000',//phoneNumber,
+          password:'123456',
+          code:''// verifyCode
         }
         
         const res = await request.post('/api/login', loginData)
@@ -310,17 +234,17 @@ export default {
     },
 
     // 微信登录
-    async handleWxLogin(e) {
-      if (!this.isAgree) {
-        uni.showToast({
-          title: '请先同意用户协议',
-          icon: 'none'
-        })
-        return
-      }
-      
+    async handleWxLogin() {
       uni.showToast({
         title: '微信登录功能暂未开放',
+        icon: 'none'
+      })
+    },
+
+    // QQ登录
+    async handleQQLogin() {
+      uni.showToast({
+        title: 'QQ登录功能暂未开放',
         icon: 'none'
       })
     },
@@ -345,130 +269,77 @@ export default {
 <style scoped>
 /* 登录页样式 */
 .login-container {
-  width: 100%;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F0F9FF 100%);
+  /* width: 100%; */
+  height:87.5vh;
+  background: #00CED1; /* 青绿色背景 */
   display: flex;
   flex-direction: column;
   position: relative;
+  padding: 120rpx 60rpx 60rpx 60rpx;
 }
 
-/* 头部Logo */
-.login-header {
+/* 欢迎文字 */
+.welcome-section {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 120rpx;
+  justify-content: center;
   margin-bottom: 80rpx;
 }
 
-.app-logo {
-  width: 160rpx;
-  height: 160rpx;
-  background: linear-gradient(135deg, #4DD0E1, #80DEEA);
-  border-radius: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 20rpx 40rpx rgba(77, 208, 225, 0.3);
-  margin-bottom: 30rpx;
-}
-
-.logo-text {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: white;
-  letter-spacing: 2rpx;
-}
-
 .welcome-text {
-  font-size: 36rpx;
-  font-weight: 500;
-  color: #333333;
-  letter-spacing: 2rpx;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #000000;
+  text-align: center;
 }
 
 /* 登录表单 */
 .login-form {
-  padding: 0 60rpx;
+  flex: 1;
 }
 
 .form-item {
   margin-bottom: 40rpx;
+    border-radius: 0 50% 50% 0 / 50% 0 0 50%; /* 左右两边圆角 */
+  overflow: hidden;
 }
 
-/* 登录方式切换 */
-.login-type-tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40rpx;
-  gap: 40rpx;
-}
-.type-tab {
-  font-size: 30rpx;
-  color: #999999;
-  padding: 0 32rpx 12rpx 32rpx;
-  cursor: pointer;
-  border-bottom: 4rpx solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-}
-.type-tab.active {
-  color: #4DD0E1;
-  font-weight: bold;
-  border-bottom: 4rpx solid #4DD0E1;
-}
-
-/* 输入框优化 */
+/* 输入框样式 */
 .input-wrapper {
   display: flex;
   align-items: center;
   background: white;
-  border-radius: 50rpx;
-  padding: 0 40rpx;
+  border-radius: 20rpx;
+  padding: 0 30rpx;
   height: 100rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
-  margin-bottom: 8rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
 }
-.input-prefix {
-  font-size: 30rpx;
-  color: #666666;
+
+.input-icon {
+  font-size: 40rpx;
   margin-right: 20rpx;
-  padding-right: 20rpx;
-  border-right: 2rpx solid #E5E5E5;
 }
+
 .phone-input,
-.code-input,
-.password-input {
+.code-input {
   flex: 1;
-  font-size: 30rpx;
+  font-size: 32rpx;
   color: #333333;
   border: none;
   background: transparent;
 }
-.input-placeholder {
-  color: #CCCCCC;
-  font-size: 28rpx;
-}
 
-/* 密码可见按钮 */
-.password-toggle {
-  margin-left: 16rpx;
-  font-size: 32rpx;
-  color: #4DD0E1;
-  cursor: pointer;
-}
-.toggle-icon {
-  font-size: 32rpx;
+.input-placeholder {
+  color: #999999;
+  font-size: 30rpx;
 }
 
 /* 验证码按钮 */
 .code-btn {
-  padding: 16rpx 32rpx;
-  background: linear-gradient(135deg, #4DD0E1, #80DEEA);
+  padding: 16rpx 24rpx;
+  background: #000000;
   color: white;
-  font-size: 26rpx;
-  border-radius: 30rpx;
+  font-size: 28rpx;
+  border-radius: 10rpx;
   white-space: nowrap;
   margin-left: 16rpx;
   transition: all 0.3s;
@@ -478,128 +349,104 @@ export default {
   color: white;
 }
 
-/* 登录按钮优化 */
+/* 信息提示文字 */
+.info-text {
+  margin-bottom: 40rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.info-text text {
+  font-size: 28rpx;
+  color: white;
+  text-align: center;
+}
+
+/* 登录按钮 */
 .login-btn {
   width: 100%;
   height: 100rpx;
-  background: linear-gradient(135deg, #CCCCCC, #DDDDDD);
+  background: #CCCCCC;
   color: white;
-  font-size: 34rpx;
-  font-weight: 500;
-  border-radius: 50rpx;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 20rpx;
   border: none;
-  margin-top: 60rpx;
+  margin-bottom: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
-  opacity: 0.7;
 }
 .login-btn.active {
-  background: linear-gradient(135deg, #4DD0E1, #80DEEA);
-  box-shadow: 0 10rpx 30rpx rgba(77, 208, 225, 0.3);
-  opacity: 1;
+  background: #000000;
+  color: white;
 }
 .login-btn.active:active {
   transform: translateY(2rpx);
-  box-shadow: 0 5rpx 20rpx rgba(77, 208, 225, 0.3);
 }
 
-/* 微信登录按钮优化 */
-.wx-login-section {
-  margin-top: 80rpx;
+/* 第三方登录区域 */
+.third-party-section {
+  margin-bottom: 60rpx;
 }
-.wx-login-btn {
-  width: 100%;
-  height: 100rpx;
-  background: white;
-  border: 2rpx solid #07C160;
-  border-radius: 50rpx;
+
+.divider-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #07C160;
-  transition: all 0.3s;
-  margin-top: 0;
-}
-.wx-login-btn:active {
-  background: #F0FFF5;
-}
-.wx-icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-right: 16rpx;
+  margin-bottom: 40rpx;
 }
 
-/* 用户协议区优化 */
+.divider-line {
+  width: 60rpx;
+  height: 2rpx;
+  background: #999999;
+}
+
+.third-party-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 80rpx;
+}
+
+.third-party-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.third-party-icon {
+  width: 100rpx;
+}
+
+.third-party-text {
+  font-size: 28rpx;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* 用户协议 */
 .agreement-section {
-  margin-top: 60rpx;
-  padding-bottom: 40rpx;
-}
-.agreement-wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 8rpx;
-}
-.agreement-label {
-  display: flex;
   align-items: center;
+  gap: 8rpx;
+  padding-top: 100px;
 }
-.agreement-checkbox {
-  transform: scale(0.7);
-  margin-right: -10rpx;
-}
+
 .agreement-text {
-  font-size: 24rpx;
-  color: #999999;
+  font-size: 28rpx;
+  color: white;
 }
+
 .agreement-link {
-  font-size: 24rpx;
-  color: #4DD0E1;
-  margin: 0 4rpx;
+  font-size: 28rpx;
+  color: white;
+  font-weight: bold;
   text-decoration: underline;
 }
 
-/* 底部装饰优化 */
-.bottom-decoration {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200rpx;
-  overflow: hidden;
-  z-index: -1;
-}
-.decoration-wave {
-  position: absolute;
-  bottom: 0;
-  width: 200%;
-  height: 200rpx;
-  border-radius: 50%;
-}
-.wave-1 {
-  background: rgba(77, 208, 225, 0.05);
-  left: -50%;
-  animation: wave 20s linear infinite;
-}
-.wave-2 {
-  background: rgba(128, 222, 234, 0.05);
-  left: -50%;
-  animation: wave 25s linear infinite reverse;
-}
-@keyframes wave {
-  0% {
-    transform: translateX(0) translateY(0);
-  }
-  50% {
-    transform: translateX(25%) translateY(-20rpx);
-  }
-  100% {
-    transform: translateX(0) translateY(0);
-  }
-}
 </style>
 

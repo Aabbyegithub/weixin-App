@@ -29,13 +29,14 @@
                 "navigationBarTitleText": "动态",
                 "navigationBarBackgroundColor": "#4DD0E1",
                 "navigationBarTextStyle": "white",
+                
                 "enablePullDownRefresh": true
             }
         },
         {
             "path": "pages/messages/index",
             "style": {
-                "navigationBarTitleText": "消息",
+                "navigationBarTitleText": "Linkme",
                 "navigationBarBackgroundColor": "#4DD0E1",
                 "navigationBarTextStyle": "white"
             }
@@ -206,30 +207,60 @@
         "backgroundColor": "#ffffff",
         "borderStyle": "black",
         "list": [
-            {
-                "pagePath": "pages/feed/index",
-                "text": "动态",
-                "iconPath": "static/icons/feed.png",
-                "selectedIconPath": "static/icons/feed_active.png"
-            },
-            {
-                "pagePath": "pages/messages/index",
-                "text": "消息",
-                "iconPath": "static/icons/message.png",
-                "selectedIconPath": "static/icons/message_active.png"
-            },
-            {
-                "pagePath": "pages/upload/index",
-                "text": "发布",
-                "iconPath": "static/icons/upload.png",
-                "selectedIconPath": "static/icons/upload_active.png"
-            },
-            {
-                "pagePath": "pages/me/index",
-                "text": "我的",
-                "iconPath": "static/icons/me.png",
-                "selectedIconPath": "static/icons/me_active.png"
-            }
+            // {
+            //     "pagePath": "pages/feed/index",
+            //     "text": "动态",
+            //     "iconPath": "static/icons/feed.png",
+            //     "selectedIconPath": "static/icons/feed_active.png"
+            // },
+            // {
+            //     "pagePath": "pages/messages/index",
+            //     "text": "消息",
+            //     "iconPath": "static/icons/message.png",
+            //     "selectedIconPath": "static/icons/message_active.png"
+            // },
+            // {
+            //     "pagePath": "pages/upload/index",
+            //     "text": "发布",
+            //     "iconPath": "static/icons/upload.png",
+            //     "selectedIconPath": "static/icons/upload_active.png"
+            // },
+            // {
+            //     "pagePath": "pages/me/index",
+            //     "text": "我的",
+            //     "iconPath": "static/icons/me.png",
+            //     "selectedIconPath": "static/icons/me_active.png"
+            // }
+             {
+            "pagePath": "pages/messages/index",
+            "text": "消息",
+            "iconPath": "static/icons/消息 (2).png",
+            "selectedIconPath": "static/icons/消息 (1).png"
+        },
+        {
+            "pagePath": "pages/feed/index",
+            "text": "发现",
+            "iconPath": "static/icons/发现.png",
+            "selectedIconPath": "static/icons/发现 (1).png"
+        },
+        // {
+        //     "pagePath": "pages/upload/index",
+        //     "text": "+",
+        //     "iconPath": "static/icons/plus.png",
+        //     "selectedIconPath": "static/icons/plus_active.png"
+        // },
+        {
+            "pagePath": "pages/chat/index",
+            "text": "反馈",
+            "iconPath": "static/icons/反馈建议.png",
+            "selectedIconPath": "static/icons/注意 .png"
+        },
+        {
+            "pagePath": "pages/me/index",
+            "text": "我的",
+            "iconPath": "static/icons/我的.png",
+            "selectedIconPath": "static/icons/我 的.png"
+        }
         ]
     },
     "uniIdRouter": {}

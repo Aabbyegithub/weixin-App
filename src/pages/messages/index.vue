@@ -1,7 +1,7 @@
 <template>
   <view class="messages-container">
     <!-- 顶部通知栏 -->
-    <view class="notification-bar" v-if="unreadNotifications > 0">
+    <!-- <view class="notification-bar" v-if="unreadNotifications > 0">
       <view class="notification-item" @tap="goToNotifications">
         <view class="notification-left">
           <view class="notification-icon-wrapper">
@@ -15,7 +15,7 @@
           <image class="arrow-icon" src="/static/icons/arrow_right.png" mode="aspectFit"></image>
         </view>
       </view>
-    </view>
+    </view> -->
 
     <!-- 消息列表 -->
     <scroll-view class="message-list" scroll-y>
